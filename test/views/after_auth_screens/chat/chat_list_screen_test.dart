@@ -116,47 +116,51 @@ void main() {
 
     testWidgets('should verify AppBar styling and TabBar configuration',
         (WidgetTester tester) async {
-      await tester.pumpWidget(createChatListScreen());
-      await tester.pumpAndSettle();
+      await mockNetworkImagesFor(() async {
+        await tester.pumpWidget(createChatListScreen());
+        await tester.pumpAndSettle();
 
-      // Get the AppBar widget
-      final appBarFinder = find.byType(AppBar);
-      expect(appBarFinder, findsOneWidget);
+        // Get the AppBar widget
+        final appBarFinder = find.byType(AppBar);
+        expect(appBarFinder, findsOneWidget);
 
-      final AppBar appBar = tester.widget<AppBar>(appBarFinder);
+        final AppBar appBar = tester.widget<AppBar>(appBarFinder);
 
-      // Verify AppBar properties
-      expect(appBar.elevation, 0.0);
-      expect(appBar.centerTitle, true);
+        // Verify AppBar properties
+        expect(appBar.elevation, 0.0);
+        expect(appBar.centerTitle, true);
 
-      // Verify TabBar is in the bottom of AppBar
-      expect(appBar.bottom, isA<TabBar>());
-      final TabBar tabBar = appBar.bottom! as TabBar;
-      expect(tabBar.tabs.length, 2); // Should have 2 tabs now
-      expect(tabBar.tabs.first, isA<Tab>());
-      expect(tabBar.tabs.last, isA<Tab>());
+        // Verify TabBar is in the bottom of AppBar
+        expect(appBar.bottom, isA<TabBar>());
+        final TabBar tabBar = appBar.bottom! as TabBar;
+        expect(tabBar.tabs.length, 2); // Should have 2 tabs now
+        expect(tabBar.tabs.first, isA<Tab>());
+        expect(tabBar.tabs.last, isA<Tab>());
+      });
     });
 
     testWidgets(
         'should verify TabController with correct length and functionality',
         (WidgetTester tester) async {
-      await tester.pumpWidget(createChatListScreen());
-      await tester.pumpAndSettle();
+      await mockNetworkImagesFor(() async {
+        await tester.pumpWidget(createChatListScreen());
+        await tester.pumpAndSettle();
 
-      // Verify TabBar has 2 tabs
-      final tabBarFinder = find.byType(TabBar);
-      expect(tabBarFinder, findsOneWidget);
+        // Verify TabBar has 2 tabs
+        final tabBarFinder = find.byType(TabBar);
+        expect(tabBarFinder, findsOneWidget);
 
-      final TabBar tabBar = tester.widget<TabBar>(tabBarFinder);
-      expect(tabBar.tabs.length, 2);
+        final TabBar tabBar = tester.widget<TabBar>(tabBarFinder);
+        expect(tabBar.tabs.length, 2);
 
-      // Verify TabBarView has correct children
-      final tabBarViewFinder = find.byType(TabBarView);
-      expect(tabBarViewFinder, findsOneWidget);
+        // Verify TabBarView has correct children
+        final tabBarViewFinder = find.byType(TabBarView);
+        expect(tabBarViewFinder, findsOneWidget);
 
-      // Initially DirectChats should be visible
-      expect(find.byType(DirectChats), findsOneWidget);
-      expect(find.byType(GroupChats), findsNothing); // Not visible initially
+        // Initially DirectChats should be visible
+        expect(find.byType(DirectChats), findsOneWidget);
+        expect(find.byType(GroupChats), findsNothing); // Not visible initially
+      });
     });
 
     testWidgets('should switch between Direct and Groups tabs correctly',
