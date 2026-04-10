@@ -122,7 +122,7 @@ jobs:
       - name: Remove generated files from coverage
         run: |
           if [ -f coverage/lcov.info ]; then
-            sed -i '/\.g\.dart/d' coverage/lcov.info
+            sed -i '/^SF:.*\.g\.dart$/,/^end_of_record$/d' coverage/lcov.info
           fi
       - name: Upload shard coverage artifact
         if: success() || failure()

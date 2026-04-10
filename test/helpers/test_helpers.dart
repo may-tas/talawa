@@ -1290,20 +1290,19 @@ void registerServices() {
 /// **returns**:
 ///   None
 void unregisterServices() {
-  // Close all StreamControllers to prevent leaks across test shards.
-  _chatStreamController?.close();
+  // Null out module-level controller references so the next
+  // registerServices() / getAndRegister*() cycle starts fresh.
+  // NOTE: Do NOT call .close() here — the widget tree is still mounted
+  // at tearDown time and closing controllers sends "done" events that
+  // can trigger setState-after-dispose errors. The getAndRegister*()
+  // helpers already close the previous controller before creating a new
+  // one, which is sufficient for inter-test cleanup.
   _chatStreamController = null;
-  _chatMessageStreamController?.close();
   _chatMessageStreamController = null;
-  _orgInfoStreamController?.close();
   _orgInfoStreamController = null;
-  _postStreamController?.close();
   _postStreamController = null;
-  _postUpdateStreamController?.close();
   _postUpdateStreamController = null;
-  _pinnedPostStreamController?.close();
   _pinnedPostStreamController = null;
-  _connectivityStreamController?.close();
   _connectivityStreamController = null;
 
   _removeRegistrationIfExists<NavigationService>();
