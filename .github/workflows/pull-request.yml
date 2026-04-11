@@ -344,7 +344,16 @@ jobs:
         run: |
           CONCURRENCY="${FLUTTER_TEST_CONCURRENCY:-$(nproc)}"
           if [ "$CONCURRENCY" -gt 4 ]; then CONCURRENCY=4; fi
-          flutter test --concurrency="$CONCURRENCY" --total-shards=12 --shard-index=${{ matrix.shard }} --coverage
+          
+          # Use file-based sharding to avoid Flutter's slow built-in discovery
+          ALL_TESTS=$(find test -name "*_test.dart" -type f | sort)
+          TESTS_FOR_SHARD=$(echo "$ALL_TESTS" | awk -v shard=${{ matrix.shard }} -v total=12 '(NR-1) % total == shard')
+          
+          if [ -n "$TESTS_FOR_SHARD" ]; then
+            echo "$TESTS_FOR_SHARD" | xargs flutter test --concurrency="$CONCURRENCY" --coverage
+          else
+            echo "No tests assigned to shard ${{ matrix.shard }}"
+          fi
       - name: Remove generated files from coverage
         run: |
           if [ -f coverage/lcov.info ]; then
