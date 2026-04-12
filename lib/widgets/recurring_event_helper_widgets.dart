@@ -224,7 +224,8 @@ class _EventEndOptionsState extends State<EventEndOptions> {
                         if (!mounted) return;
                         setState(() {
                           widget.model.recurrenceEndDate = pickedDate;
-                          widget.model.eventEndType = EventEndTypes.on;
+                          widget.model.setEventEndType(EventEndTypes.on);
+                          widget.model.updateRecurrenceLabel();
                         });
                       },
                       icon: Text(

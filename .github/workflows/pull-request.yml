@@ -43,6 +43,7 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: "stable" # or: 'beta', 'dev' or 'master'
+          cache: true
       - name: Set default branch.
         run: git remote set-head origin --auto
         shell: bash
@@ -331,13 +332,6 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: "stable" # or: 'beta', 'dev' or 'master'
           cache: true
-      - name: Cache pub packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pub-
       - name: Running pub get to fetch dependencies
         run: flutter pub get
       - name: Codebase testing (shard ${{ matrix.shard }}/12)
@@ -372,7 +366,7 @@ jobs:
     name: Merge coverage & upload
     runs-on: ubuntu-latest
     needs: [Flutter-Testing]
-    if: ${{ !cancelled() }}
+    if: ${{ needs.Flutter-Testing.result == 'success' }}
     steps:
       - uses: actions/checkout@v4
       - name: Install lcov
@@ -439,6 +433,7 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: "stable" # or: 'beta', 'dev' or 'master'
+          cache: true
       - name: Running pub get to fetch dependencies
         run: flutter pub get
       - name: Building for android
@@ -462,6 +457,7 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: "stable" # or: 'beta', 'dev' or 'master'
           architecture: x64
+          cache: true
       - name: Building for ios
         run: flutter build ios --release --no-codesign
 
@@ -548,6 +544,7 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: "stable"
+          cache: true
 
       - name: Cache Flutter dependencies
         uses: actions/cache@v4
