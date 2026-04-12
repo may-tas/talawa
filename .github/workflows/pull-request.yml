@@ -344,11 +344,11 @@ jobs:
         run: |
           CONCURRENCY="${FLUTTER_TEST_CONCURRENCY:-$(nproc)}"
           if [ "$CONCURRENCY" -gt 4 ]; then CONCURRENCY=4; fi
-          
+
           # Use file-based sharding to avoid Flutter's slow built-in discovery
           ALL_TESTS=$(find test -name "*_test.dart" -type f | sort)
           TESTS_FOR_SHARD=$(echo "$ALL_TESTS" | awk -v shard=${{ matrix.shard }} -v total=12 '(NR-1) % total == shard')
-          
+
           if [ -n "$TESTS_FOR_SHARD" ]; then
             echo "$TESTS_FOR_SHARD" | xargs flutter test --concurrency="$CONCURRENCY" --coverage
           else
@@ -419,6 +419,7 @@ jobs:
           exclude: "docs/"
 
       - name: Test acceptable level of code coverage
+        if: needs.Flutter-Testing.result == 'success'
         uses: VeryGoodOpenSource/very_good_coverage@v3
         with:
           path: "./coverage/lcov.info"
